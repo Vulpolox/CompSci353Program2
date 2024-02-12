@@ -20,6 +20,12 @@
      (5 . "GENRE")
      (6 . "DONE"))))
 
+; pre  -- takes user input
+; post -- converts user input into integer and returns it if valid
+;         otherwise returns false
+(define (input-converter user-input)
+  
+
 ; pre  -- doesn't take any parameters
 ; post -- returns a list containing 1-3 search criteria
 (define (get-user-input [input-list '()])
@@ -27,8 +33,8 @@
     (display menu)
     (displayln "")
     (define current-input (read-line))
-    (displayln current-input)
-    ))
+    (input-converter current-input
+    
     
 
 (get-user-input)
