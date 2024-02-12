@@ -1,5 +1,7 @@
 #lang racket
 
+(provide refined-lines)
+
 ; pre  -- takes a string and a char to remove from the string
 ; post -- returns said string without any instances of char
 (define (strip-char str char)
