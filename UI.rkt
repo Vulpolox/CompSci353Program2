@@ -36,7 +36,7 @@
 ; post -- returns a string from user input
 (define (get-str)
   (begin
-    (displayln "Enter search terms")
+    (displayln "Enter search term")
     (define input-search-terms (read-line))
     input-search-terms))
   
@@ -45,20 +45,20 @@
 ; post -- returns a list containing 1-3 search criteria paired with strings to search
 (define (get-user-input [input-list '()])
   (define (input-validator user-input)                                     ; nested input validator function
-    (define converted-input (string-ref (string-upcase user-input)       ; converted input
+    (define converted-input (string-ref (string-upcase user-input)         ; converted input
                                         0))
     (cond
-      [(eq? (string-length user-input)
+      [(eq? (string-length user-input)                                     ; user didn't enter anything
             0)
        (begin
          (displayln "Input is invalid; empty string was entered")
          (get-user-input input-list))]
-      [(not (hash-has-key? menu-hash
+      [(not (hash-has-key? menu-hash                                       ; if the user's input doesn't match any option on the menu
                            converted-input))
        (begin
          (displayln "Input is invalid; choose an option from the menu")
          (get-user-input input-list))]
-      [(contains? input-list
+      [(contains? input-list                                               ; if the option has already been selected
                   (hash-ref menu-hash
                             converted-input))
        (begin
@@ -67,11 +67,12 @@
       [else
        converted-input]
       ))
-  (begin
-    (display menu)
-    (displayln "")
-    (define current-input (read-line))                          
-    (define validated-input (input-validator current-input)))
+  (define (iterate)                                                       ; nested function to get input
+    (begin
+      (display menu)
+      (displayln "")
+      (define current-input (read-line))                          
+      (define validated-input (input-validator current-input)))
   
     (cond
       [(eq? #\F validated-input)
@@ -87,7 +88,10 @@
          (define pair-to-add (cons current-category search-terms))
          (define updated-list (cons pair-to-add input-list))
          (get-user-input updated-list))]
-      ))
+      ))  
+  (if (eq? (length input-list) 3)
+      input-list
+      (iterate)))
     
     
     
