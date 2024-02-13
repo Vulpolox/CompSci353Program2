@@ -20,19 +20,6 @@
      (#\E . "GENRE")
      (#\F . "DONE"))))
 
-; pre  -- takes a list and an element to search the list for
-; post -- returns true if the element is in the list; else false
-(define (contains? lst element)
-  (cond
-    [(empty? lst)
-     #f]
-    [(eq? lst element)
-     #t]
-    [else
-     (contains? (cdr lst) element)]
-    ))
-
-  
 ; pre  -- takes a list of menu choices that have previously been chosen
 ; post -- returns a valid character representing a menu option that hasn't already been chosen
 (define (get-valid-choice [already-chosen '()] [num-left 0])
