@@ -39,30 +39,30 @@
     
   (if (not (eq? num-left 0))
       (begin
-        (display menu)
+        (display menu)                                    ; display the menu if the user can still enter more categories
         (displayln ""))
       (begin
         (displayln "Enter any value to continue")))
           
-  (define choice (read-line))
-  (define casted-choice (string-ref (string-upcase choice) 0))
+  (define choice (read-line))                                   ; raw user input
+  (define casted-choice (string-ref (string-upcase choice) 0))  ; the user's input casted to a capitalized char
     
   (cond
-    [(not (hash-has-key? menu-hash
+    [(not (hash-has-key? menu-hash                        ; if the received input is not on the menu
                          casted-choice))
      (begin
        (displayln "Invalid input; input is not an option on menu")
        (get-valid-choice already-chosen num-left))]
       
-    [(member casted-choice already-chosen)
+    [(member casted-choice already-chosen)                ; if the user has already chosen the search category
      (begin
        (displayln "Invalid input; input has already been chosen")
        (get-valid-choice already-chosen num-left))]
       
-    [(eq? num-left 0)
+    [(eq? num-left 0)                                     ; if the user has already picked 3 search categories
      #\F]
        
-    [else
+    [else                                                 ; if the user's input is valid, return it
      casted-choice]))
 
 ; pre  -- takes a character representing an option from the menu
@@ -85,21 +85,21 @@
 
 ; pre  -- takes a list of pairs where each pair contains a search category
 ;         and the associated search data obtained from user input; also takes
-;         a list of categories the user has already selected
+;         a list of categories the user has already selected and a counter
 ; post -- returns a list of up to three pairs
 (define (get-search-data [output-list '()] [already-chosen'()] [num-left 3])
   
-  (define current-choice (get-valid-choice already-chosen num-left))      
-  (define current-category (hash-ref menu-hash current-choice))
+  (define current-choice (get-valid-choice already-chosen num-left))            ; binds a valid menu option from the user   
+  (define current-category (hash-ref menu-hash current-choice))                 ; binds what said menu option maps to in the menu-hash
   
-  (define search-data ((get-input-handler current-choice)))
+  (define search-data ((get-input-handler current-choice)))                     ; evaluates different functions based on current-choice and binds what they return
   
-  (define pair-to-add (cons search-data current-category))
-  (define updated-output-list (cons pair-to-add output-list))
-  (define updated-already-chosen (cons current-choice output-list))
+  (define pair-to-add (cons search-data current-category))                      ; creates a pair to add to the output list
+  (define updated-output-list (cons pair-to-add output-list))                   ; updates output list
+  (define updated-already-chosen (cons current-choice output-list))             ; updates list of menu options already chosen
 
   (cond
-    [(eq? current-category "DONE")
+    [(eq? current-category "DONE")                                              ; base case is evaluated if current-choice is #\F or the user has entered 3 categories
      output-list]
     
     [else
