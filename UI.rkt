@@ -20,7 +20,7 @@
      (#\E . "GENRE")
      (#\F . "DONE"))))
 
-; pre  -- takes a list of menu choices that have previously been chosen
+; pre  -- takes a list of menu options that have previously been chosen
 ; post -- returns a valid character representing a menu option that hasn't already been chosen
 (define (get-valid-choice [already-chosen '()] [num-left 0])
     
