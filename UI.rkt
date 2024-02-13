@@ -32,70 +32,77 @@
      (contains? (cdr lst) element)]
     ))
 
+  
+; pre  -- takes a list of menu choices that have previously been chosen
+; post -- returns a valid character representing a menu option that hasn't already been chosen
+(define (get-valid-choice [already-chosen '()] [num-left 0])
+    
+  (if (not (eq? num-left 0))
+      (begin
+        (display menu)
+        (displayln ""))
+      (begin
+        (displayln "Enter any value to continue")))
+          
+  (define choice (read-line))
+  (define casted-choice (string-ref (string-upcase choice) 0))
+    
+  (cond
+    [(not (hash-has-key? menu-hash
+                         casted-choice))
+     (begin
+       (displayln "Invalid input; input is not an option on menu")
+       (get-valid-choice already-chosen num-left))]
+      
+    [(member casted-choice already-chosen)
+     (begin
+       (displayln "Invalid input; input has already been chosen")
+       (get-valid-choice already-chosen num-left))]
+      
+    [(eq? num-left 0)
+     #\F]
+       
+    [else
+     casted-choice]))
+
+; pre  -- takes a character representing an option from the menu
+; post -- returns a function for handling said option
+(define (get-input-handler choice)
+  (if (eq? choice #\B)
+      handle-date-range
+      handle-string))
+
 ; pre  -- takes no parameters
-; post -- returns a string from user input
-(define (get-str)
-  (begin
-    (displayln "Enter search term")
-    (define input-search-terms (read-line))
-    input-search-terms))
-  
+; post -- returns a pair of integers representing the upper
+;         and lower bounds of a date search range
+(define (handle-date-range)
+  "TODO1")
 
-; pre  -- doesn't take any parameters
-; post -- returns a list containing 1-3 search criteria paired with strings to search
-(define (get-user-input [input-list '()])
-  (define (input-validator user-input)                                     ; nested input validator function
-    (define converted-input (string-ref (string-upcase user-input)         ; converted input
-                                        0))
-    (cond
-      [(eq? (string-length user-input)                                     ; user didn't enter anything
-            0)
-       (begin
-         (displayln "Input is invalid; empty string was entered")
-         (get-user-input input-list))]
-      [(not (hash-has-key? menu-hash                                       ; if the user's input doesn't match any option on the menu
-                           converted-input))
-       (begin
-         (displayln "Input is invalid; choose an option from the menu")
-         (get-user-input input-list))]
-      [(contains? input-list                                               ; if the option has already been selected
-                  (hash-ref menu-hash
-                            converted-input))
-       (begin
-         (displayln "Input is invalid; option already selected")
-         (get-user-input input-list))]
-      [else
-       converted-input]
-      ))
-  (define (iterate)                                                       ; nested function to get input
-    (begin
-      (display menu)
-      (displayln "")
-      (define current-input (read-line))                          
-      (define validated-input (input-validator current-input)))
-  
-    (cond
-      [(eq? #\F validated-input)
-       input-list]
-      [(eq? (length input-list)
-                    3)
-       input-list]
-      [else
-       (begin    
-         (define current-category (hash-ref menu-hash                
-                                       validated-input))
-         (define search-terms (get-str))
-         (define pair-to-add (cons current-category search-terms))
-         (define updated-list (cons pair-to-add input-list))
-         (get-user-input updated-list))]
-      ))  
-  (if (eq? (length input-list) 3)
-      input-list
-      (iterate)))
-    
-    
-    
-    
+; pre  -- takes no parameters
+; post -- returns a string representing search data
+(define (handle-string)
+  "TODO2")
 
-(get-user-input)
+; pre  -- takes a list of pairs where each pair contains a search category
+;         and the associated search data obtained from user input; also takes
+;         a list of categories the user has already selected
+; post -- returns a list of up to three pairs
+(define (get-search-data [output-list '()] [already-chosen'()] [num-left 3])
   
+  (define current-choice (get-valid-choice already-chosen num-left))      
+  (define current-category (hash-ref menu-hash current-choice))
+  
+  (define search-data ((get-input-handler current-choice)))
+  
+  (define pair-to-add (cons search-data current-category))
+  (define updated-output-list (cons pair-to-add output-list))
+  (define updated-already-chosen (cons current-choice output-list))
+
+  (cond
+    [(eq? current-category "DONE")
+     output-list]
+    
+    [else
+     (get-search-data updated-output-list updated-already-chosen (- num-left 1) )]))
+
+(get-search-data)
