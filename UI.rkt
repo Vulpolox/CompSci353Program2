@@ -1,7 +1,7 @@
 #lang racket
 
-; menu to display to user
-(define menu
+; menu to display to user for categories
+(define category-menu
   "ADD UP TO 3 SEARCH CRITERIA:
    A: GAME TITLE
    B: RELEASE DATE
@@ -10,8 +10,17 @@
    E: GENRE
    F: DONE")
 
-; hash table mapping a number representing the user's choice to a string
-(define menu-hash
+; menu to display to the user for regions
+(define region-menu
+  "CHOOSE A REGION:
+   A: UNITED STATES
+   B: JAPAN
+   C: EUROPE
+   D: REST OF WORLD
+   E: GLOBAL")
+
+; hash table mapping a letter representing the user's choice to a string
+(define category-menu-hash
   (make-immutable-hash
    '((#\A . "GAME TITLE")
      (#\B . "RELEASE DATE")
@@ -20,9 +29,18 @@
      (#\E . "GENRE")
      (#\F . "DONE"))))
 
-; pre  -- takes a list of menu options that have previously been chosen
+; hash table mapping letter representing user's choice to a string
+(define region-menu-hash
+  (make-immutable-hash
+   '((#\A . "UNITED STATES")
+     (#\B . "JAPAN")
+     (#\C . "EUROPE")
+     (#\D . "REST OF WORLD")
+     (#\E . "GLOBAL"))))
+
+; pre  -- takes a list of menu options that have previously been chosen, a menu to display to the user, and a hash table
 ; post -- returns a valid character representing a menu option that hasn't already been chosen
-(define (get-valid-choice [already-chosen '()] [num-left 0])
+(define (get-valid-choice menu menu-hash [already-chosen '()] [num-left 0])
     
   (if (not (eq? num-left 0))
       (begin
@@ -39,14 +57,14 @@
                          casted-choice))
      (begin
        (displayln "Invalid input; input is not an option on menu")
-       (get-valid-choice already-chosen num-left))]
+       (get-valid-choice menu menu-hash already-chosen num-left))]
       
-    [(member casted-choice already-chosen)                ; if the user has already chosen the search category
+    [(member casted-choice already-chosen)                ; if the user has already chosen the menu option
      (begin
        (displayln "Invalid input; input has already been chosen")
-       (get-valid-choice already-chosen num-left))]
+       (get-valid-choice menu menu-hash already-chosen num-left))]
       
-    [(eq? num-left 0)                                     ; if the user has already picked 3 search categories
+    [(eq? num-left 0)                                     ; if the user has already picked num-left options from the menu
      #\F]
        
     [else                                                 ; if the user's input is valid, return it
@@ -55,20 +73,83 @@
 ; pre  -- takes a character representing an option from the menu
 ; post -- returns a function for handling said option
 (define (get-input-handler choice)
-  (if (eq? choice #\B)
-      handle-date-range
-      handle-string))
+  (cond
+    [(eq? choice #\B)
+      handle-range]
+    
+     [(eq? choice #\D)
+       handle-region]
+
+     [(eq? choice #\F)
+      skip]
+     
+     [else
+      handle-string]))
 
 ; pre  -- takes no parameters
 ; post -- returns a pair of integers representing the upper
 ;         and lower bounds of a date search range
-(define (handle-date-range)
-  "TODO1")
+(define (handle-range)
+
+  (define lower (get-num "Enter lower bound"))
+  (define upper (get-num "Enter upper bound"))
+
+  (cond
+    
+    [(< lower upper)
+     (cons lower upper)]
+
+    [(> lower upper)
+     (cons upper lower)]
+
+    [else
+     (cons lower upper)]))
+
+    
 
 ; pre  -- takes no parameters
 ; post -- returns a string representing search data
 (define (handle-string)
-  "TODO2")
+  (begin
+    (displayln "Enter search term")
+    (read-line)))
+
+; pre  -- takes no parameters
+; post -- returns a pair containing a region and a sales range
+(define (handle-region)
+  (define region (hash-ref region-menu-hash
+                           (get-valid-choice region-menu region-menu-hash '() 1)))
+  
+  (cons region (handle-range)))
+
+; pre  -- takes no parameters
+; post -- does nothing
+(define (skip)
+  "")
+
+; pre  -- takes a string to display to the user
+; post -- gets a string from user input; if the string is numeric, returns the string
+;         type-casted to an integer, else recursively calls itself
+(define (get-num message)
+
+  (begin
+    (displayln message))
+  
+  (define num (read-line))
+  (define input-list (string->list num))
+  (define num-list (filter char-numeric? input-list))
+
+  (cond
+    
+    [(eq? (length input-list)
+          (length num-list))
+     (string->number num)]
+
+    [else
+     (begin
+       (displayln "Invalid input; enter a number")
+       (get-num message))]))
+  
 
 ; pre  -- takes a list of pairs where each pair contains a search category
 ;         and the associated search data obtained from user input; also takes
@@ -76,8 +157,8 @@
 ; post -- returns a list of up to three pairs
 (define (get-search-data [output-list '()] [already-chosen'()] [num-left 3])
   
-  (define current-choice (get-valid-choice already-chosen num-left))            ; binds a valid menu option from the user   
-  (define current-category (hash-ref menu-hash current-choice))                 ; binds what said menu option maps to in the menu-hash
+  (define current-choice (get-valid-choice category-menu category-menu-hash already-chosen num-left))            ; binds a valid menu option from the user   
+  (define current-category (hash-ref category-menu-hash current-choice))                                         ; binds what said menu option maps to in the menu-hash
   
   (define search-data ((get-input-handler current-choice)))                     ; evaluates different functions based on current-choice and binds what they return
   
@@ -92,4 +173,6 @@
     [else
      (get-search-data updated-output-list updated-already-chosen (- num-left 1) )]))
 
-(get-search-data)
+ (get-search-data)
+
+; (get-num "Enter a number")
