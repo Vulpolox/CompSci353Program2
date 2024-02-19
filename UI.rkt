@@ -1,5 +1,8 @@
 #lang racket
 
+(provide get-search-data)
+(provide get-sorting-option)
+
 ; menu to display to user for categories
 (define category-menu
   "ADD UP TO 3 SEARCH CRITERIA:
@@ -19,7 +22,13 @@
    D: REST OF WORLD
    E: GLOBAL")
 
-; hash table mapping a letter representing the user's choice to a string
+; menu for sorting options
+(define sort-menu
+  "CHOOSE A SORTING OPTION
+   A: SALES
+   B: RATING")
+
+; hash table mapping a letter representing search category to a string
 (define category-menu-hash
   (make-immutable-hash
    '((#\A . "GAME TITLE")
@@ -29,7 +38,7 @@
      (#\E . "GENRE")
      (#\F . "DONE"))))
 
-; hash table mapping letter representing user's choice to a string
+; hash table mapping letter representing region to a string
 (define region-menu-hash
   (make-immutable-hash
    '((#\A . "UNITED STATES")
@@ -37,6 +46,12 @@
      (#\C . "EUROPE")
      (#\D . "REST OF WORLD")
      (#\E . "GLOBAL"))))
+
+; hash table mapping letter representing sorting option to string
+(define sort-menu-hash
+  (make-immutable-hash
+   '((#\A . "SALES")
+     (#\B . "RATING"))))
 
 ; pre  -- takes a list of menu options that have previously been chosen, a menu to display to the user, and a hash table
 ; post -- returns a valid character representing a menu option that hasn't already been chosen
@@ -173,6 +188,10 @@
     [else
      (get-search-data updated-output-list updated-already-chosen (- num-left 1) )]))
 
- (get-search-data)
+; pre  -- takes a menu and a hash table representing sorting options
+; post -- returns a string representing whether to sort by sales or reviews
+(define (get-sorting-option)
+  (hash-ref sort-menu-hash
+            (get-valid-choice sort-menu sort-menu-hash '() 1)))
 
-; (get-num "Enter a number")
+(get-sorting-option)
