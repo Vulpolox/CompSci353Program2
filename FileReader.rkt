@@ -24,7 +24,8 @@
   (map comma-split stripped-lines))
 
 ; pre  -- takes a list of strings
-; post -- fixes elements that were improperly split (e.g. if there was a comma in the title)
+; post -- fixes elements that were improperly split (e.g. if there
+;         was a comma in the title)
 (define (fix-line lst)
   (if (not (eq? (length lst) 13))
       
@@ -37,5 +38,3 @@
 (define raw-lines (file->lines "Video Games Sales.csv"))
 (define refined-lines (get-refined-lines raw-lines))
 (define data (map fix-line refined-lines))
-
-

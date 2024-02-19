@@ -193,5 +193,3 @@
 (define (get-sorting-option)
   (hash-ref sort-menu-hash
             (get-valid-choice sort-menu sort-menu-hash '() 1)))
-
-(get-sorting-option)
