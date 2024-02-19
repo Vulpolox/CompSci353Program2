@@ -1,6 +1,6 @@
 #lang racket
 
-(provide refined-lines)
+(provide data)
 
 ; pre  -- takes a string and a char to remove from the string
 ; post -- returns said string without any instances of char
@@ -22,12 +22,20 @@
     (string-split str ","))
   (define stripped-lines (map strip-quotes lines))
   (map comma-split stripped-lines))
-  
-  
+
+; pre  -- takes a list of strings
+; post -- fixes elements that were improperly split (e.g. if there was a comma in the title)
+(define (fix-line lst)
+  (if (not (eq? (length lst) 13))
+      
+      (let ([complete-title (string-append (third lst) "," (fourth lst))])
+        (append (take lst 2) (list complete-title) (drop lst 4)))
+
+      lst))
+
 
 (define raw-lines (file->lines "Video Games Sales.csv"))
 (define refined-lines (get-refined-lines raw-lines))
-
-(first refined-lines)
+(define data (map fix-line refined-lines))
 
 
