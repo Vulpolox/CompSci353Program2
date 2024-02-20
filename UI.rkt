@@ -170,6 +170,7 @@
 ;         and the associated search data obtained from user input; also takes
 ;         a list of categories the user has already selected and a counter
 ; post -- returns a list of up to three pairs
+;         sample output: '(("mario" . "GAME TITLE") ((2000 . 2020) . "RELEASE DATE") (((20 . 40) . "GLOBAL") . "REGION")))
 (define (get-search-data [output-list '()] [already-chosen'()] [num-left 3])
   
   (define current-choice (get-valid-choice category-menu category-menu-hash already-chosen num-left))            ; binds a valid menu option from the user   

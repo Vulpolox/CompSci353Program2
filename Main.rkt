@@ -14,6 +14,8 @@
      ("JAPAN" . 9)
      ("REST OF WORLD" . 10)
      ("GLOBAL" . 11)
+     ("SALES" . 1)
+     ("RATING" . 12)
      )))
 
 ; pre  -- takes a list
@@ -22,23 +24,6 @@
   (for-each
    (lambda(sub-list) (displayln sub-list))
    lst))
-
-; pre  -- takes a search category
-; post -- returns a filter function
-(define (filter-selector category)
-
-  (define str-list '("GAME TITLE" "PUBLISHER" "GENRE"))
-  (define num-list '("RELEASE DATE" "GENRE"))
-
-  (cond
-    [(member category str-list)
-     string-filter]
-    
-    [(member category num-list)
-     number-filter]
-    
-    [else
-     "Error"]))
 
 ; pre  -- takes a list of lists, a string, and an index
 ; post -- filters the list of lists to only contain lists that
@@ -77,7 +62,7 @@
 ; post -- filters data based off of search filters
 (define (search data search-filters)
 
-  (define current-filter (mod-car search-filters))   ; e.g. ((2000 . 2020) . "RELEASE DATE")
+  (define current-filter (mod-car search-filters))     ; e.g. ((2000 . 2020) . "RELEASE DATE")
   (define current-category (mod-cdr current-filter))   ; e.g. "RELEASE DATE"
 
   (define str-list '("GAME TITLE" "PUBLISHER" "GENRE")) 
@@ -118,11 +103,17 @@
     [(equal? current-category "REGION")
      (handle-num-range (car current-filter))]))
 
-    
+; pre  -- takes a list with the csv file contents and a sorting criterion 
+; post -- returns a sorted list
+(define (sort-list lst criterion)
 
-    
+  (define index (hash-ref category->index-hash criterion))
 
-  ;(define (handle-string current-term)
+  (define (compare current next)
+    (> (list-ref current index) (list-ref next index)))
+
+  (sort lst compare))
+
     
 
 
