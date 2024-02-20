@@ -14,7 +14,7 @@
      ("JAPAN" . 9)
      ("REST OF WORLD" . 10)
      ("GLOBAL" . 11)
-     ("SALES" . 1)
+     ("SALES" . 11)
      ("RATING" . 12)
      )))
 
@@ -89,7 +89,7 @@
   
   (cond
     [(empty? data)
-     '("NO RESULTS; TRY USING FEWER FILTERS")]
+     '()]
 
     [(empty? search-filters)
      data]
@@ -104,22 +104,39 @@
      (handle-num-range (car current-filter))]))
 
 ; pre  -- takes a list with the csv file contents and a sorting criterion 
-; post -- returns a sorted list
+; post -- returns a sorted list as per the criterion
 (define (sort-list lst criterion)
 
-  (define index (hash-ref category->index-hash criterion))
+  (define index (hash-ref category->index-hash criterion)) ; the index of the sublists to sort by
 
-  (define (compare current next)
-    (> (list-ref current index) (list-ref next index)))
+  (define (compare current next)                           ; simple comparison function to use in the sort function
+    (> (string->number (list-ref current index))
+       (string->number (list-ref next index))))
 
   (sort lst compare))
 
-    
+
+; pre  -- takes no arguments
+; post -- loops until the user wants to stop
+(define (main-loop)
+  (define search-filters (get-search-data))
+  (define sort-criterion (get-sorting-option))
+  (define filtered-results (search data search-filters))
+
+  (cond
+    [(empty? filtered-results)
+     (begin
+       (displayln "NO RESULTS FOUND; TRY USING LESS SEARCH FILTERS"))]
+
+    [else
+     (begin
+       (print-list (sort-list filtered-results sort-criterion)))])
+
+  (begin
+    (displayln "---")
+    (displayln "ENTER ANY VALUE TO CONTINUE; LEAVE FIELD BLANK TO QUIT")
+    (define continue (read-line))
+    (if (string=? continue "") null (main-loop))))
 
 
-
-  
-    
-(define sample '(("mario" . "GAME TITLE") ((2000 . 2020) . "RELEASE DATE") (((20 . 40) . "GLOBAL") . "REGION")))
-(search data sample)
-
+(main-loop)
