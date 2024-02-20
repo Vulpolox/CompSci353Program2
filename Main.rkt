@@ -57,7 +57,6 @@
 (define (mod-car lst)
   (if (empty? lst) '() (car lst)))
 
-
 ; pre  -- takes data and search-filters to apply to said data
 ; post -- filters data based off of search filters
 (define (search data search-filters)
@@ -121,7 +120,7 @@
 (define (main-loop)
   (define search-filters (get-search-data))
   (define sort-criterion (get-sorting-option))
-  (define filtered-results (search data search-filters))
+  (define filtered-results (search (cdr data) search-filters))
 
   (cond
     [(empty? filtered-results)
