@@ -13,7 +13,8 @@
      ("EUROPE" . 8)
      ("JAPAN" . 9)
      ("REST OF WORLD" . 10)
-     ("GLOBAL" . 11))))
+     ("GLOBAL" . 11)
+     )))
 
 ; pre  -- takes a list
 ; post -- displays the list nicely to the console
@@ -62,9 +63,72 @@
     (and (>= comparison-number lower) (<= comparison-number upper)))
 
   (filter predicate (cdr data)))
-    
-;(define reg (regexp "hello"))
-;(regexp-match reg "world")
-;(regexp-match reg "hellowrd")
 
-(number-filter data 1 50 0)
+; pre  -- takes a list
+; post -- performs car or cdr on list with the addition of
+;         returning an empty list if the passed list is empty
+(define (mod-cdr lst)
+  (if (empty? lst) '() (cdr lst)))
+(define (mod-car lst)
+  (if (empty? lst) '() (car lst)))
+
+
+; pre  -- takes data and search-filters to apply to said data
+; post -- filters data based off of search filters
+(define (search data search-filters)
+
+  (define current-filter (mod-car search-filters))   ; e.g. ((2000 . 2020) . "RELEASE DATE")
+  (define current-category (mod-cdr current-filter))   ; e.g. "RELEASE DATE"
+
+  (define str-list '("GAME TITLE" "PUBLISHER" "GENRE")) 
+
+  (define (handle-num-range current-term) ; current-term must be in format ((lower . upper) . "CATEGORY NAME")
+    (define index (hash-ref category->index-hash (cdr current-term)))
+    (define numbers (car current-term))
+    (define upper-bound (cdr numbers))
+    (define lower-bound (car numbers))
+    
+    (define updated-data (number-filter data lower-bound upper-bound index))
+
+    (search updated-data (cdr search-filters)))
+
+  
+  (define (handle-string current-term) ; current-term must be in format ("STRING" . "CATEGORY NAME")
+    (define index (hash-ref category->index-hash (cdr current-term)))
+    (define search-string (car current-term))
+
+    (define updated-data (string-filter data search-string index))
+
+    (search updated-data (cdr search-filters)))
+
+  
+  (cond
+    [(empty? data)
+     '("NO RESULTS; TRY USING FEWER FILTERS")]
+
+    [(empty? search-filters)
+     data]
+
+    [(member current-category str-list)
+     (handle-string current-filter)]
+
+    [(equal? current-category "RELEASE DATE")
+     (handle-num-range current-filter)]
+
+    [(equal? current-category "REGION")
+     (handle-num-range (car current-filter))]))
+
+    
+
+    
+
+  ;(define (handle-string current-term)
+    
+
+
+
+  
+    
+(define sample '(("mario" . "GAME TITLE") ((2000 . 2020) . "RELEASE DATE") (((20 . 40) . "GLOBAL") . "REGION")))
+(search data sample)
+

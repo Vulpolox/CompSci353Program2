@@ -135,7 +135,7 @@
   (define region (hash-ref region-menu-hash
                            (get-valid-choice region-menu region-menu-hash '() 1)))
   
-  (cons region (handle-range)))
+  (cons (handle-range) region))
 
 ; pre  -- takes no parameters
 ; post -- does nothing
