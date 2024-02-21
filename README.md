@@ -16,8 +16,8 @@
 
 ## Sample Output Screenshot
 
-[Screenshot 1](https://github.com/Vulpolox/CompSci353Program2/blob/main/OutputScreenshots/Screen%20Shot%202024-02-21%20at%2011.52.39%20AM.png)
-[Screenshot 2](https://github.com/Vulpolox/CompSci353Program2/blob/main/OutputScreenshots/Screen%20Shot%202024-02-21%20at%2011.53.40%20AM.png)
+![Screenshot 1](https://github.com/Vulpolox/CompSci353Program2/blob/main/OutputScreenshots/Screen%20Shot%202024-02-21%20at%2011.52.39%20AM.png)
+![Screenshot 2](https://github.com/Vulpolox/CompSci353Program2/blob/main/OutputScreenshots/Screen%20Shot%202024-02-21%20at%2011.53.40%20AM.png)
 
 
  
