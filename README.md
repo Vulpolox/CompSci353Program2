@@ -2,9 +2,9 @@
 
 ## Instructions on How to Run Code
 
-1.) Clone repo
-2.) Open Main.rkt in DrRacket
-3.) Run Main.rkt
+### 1.) Clone repo
+### 2.) Open Main.rkt in DrRacket
+### 3.) Run Main.rkt
 
 ## Code Shortcuts
 
