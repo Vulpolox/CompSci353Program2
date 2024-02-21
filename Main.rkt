@@ -66,40 +66,40 @@
 
   (define str-list '("GAME TITLE" "PUBLISHER" "GENRE")) 
 
-  (define (handle-num-range current-term) ; current-term must be in format ((lower . upper) . "CATEGORY NAME")
-    (define index (hash-ref category->index-hash (cdr current-term)))
-    (define numbers (car current-term))
-    (define upper-bound (cdr numbers))
-    (define lower-bound (car numbers))
+  (define (handle-num-range current-term)                              ; current-term must be in format ((lower . upper) . "CATEGORY NAME")
+    (define index (hash-ref category->index-hash (cdr current-term)))     ; integer index of the current category relating to the column of the csv
+    (define numbers (car current-term))                                   ; pair of numbers representing a lower and upper bounds
+    (define upper-bound (cdr numbers))                                    ; the upper bound of the range in "numbers"
+    (define lower-bound (car numbers))                                    ; the lower bound of the range in "numbers"
     
-    (define updated-data (number-filter data lower-bound upper-bound index))
+    (define updated-data (number-filter data lower-bound upper-bound index)) ; the updated csv data with the current search filter applied
 
-    (search updated-data (cdr search-filters)))
+    (search updated-data (cdr search-filters)))                              ; recursive call to the function with updated-data and the first search filter removed
 
   
-  (define (handle-string current-term) ; current-term must be in format ("STRING" . "CATEGORY NAME")
-    (define index (hash-ref category->index-hash (cdr current-term)))
-    (define search-string (car current-term))
+  (define (handle-string current-term)                                  ; current-term must be in format ("STRING" . "CATEGORY NAME")
+    (define index (hash-ref category->index-hash (cdr current-term)))      ; integer index of the current category relating to the column of the csv
+    (define search-string (car current-term))                              ; string to filter the csv data at the index by
 
-    (define updated-data (string-filter data search-string index))
+    (define updated-data (string-filter data search-string index))          ; the updated csv data witht the current search filter applied
 
-    (search updated-data (cdr search-filters)))
+    (search updated-data (cdr search-filters)))                             ; recursive call to the function with updated-data and the first search filter removed
 
   
   (cond
-    [(empty? data)
-     '()]
+    [(empty? data)                             ; if the csv data is empty (i.e. search filters removed all entries),
+     '()]                                      ; short circuit the funciton and return an empty list
 
-    [(empty? search-filters)
+    [(empty? search-filters)                   ; if all the search filters have been applied, return filtered data
      data]
 
-    [(member current-category str-list)
+    [(member current-category str-list)        ; if the category is one that filters data via a string
      (handle-string current-filter)]
 
-    [(equal? current-category "RELEASE DATE")
+    [(equal? current-category "RELEASE DATE")  ; if the category is a date
      (handle-num-range current-filter)]
 
-    [(equal? current-category "REGION")
+    [(equal? current-category "REGION")        ; if the category is sales by region
      (handle-num-range (car current-filter))]))
 
 ; pre  -- takes a list with the csv file contents and a sorting criterion 
@@ -116,22 +116,22 @@
 
 
 ; pre  -- takes no arguments
-; post -- loops until the user wants to stop
+; post -- executes and loops the program until the user wants to stop
 (define (main-loop)
-  (define search-filters (get-search-data))
-  (define sort-criterion (get-sorting-option))
-  (define filtered-results (search (cdr data) search-filters))
+  (define search-filters (get-search-data))                     ; search filters to be applied to the data
+  (define sort-criterion (get-sorting-option))                  ; gets the sorting option (sales or rank)
+  (define filtered-results (search (cdr data) search-filters))  ; the filtered search results
 
   (cond
-    [(empty? filtered-results)
+    [(empty? filtered-results)                                          ; if there are no results after applying the filters
      (begin
        (displayln "NO RESULTS FOUND; TRY USING LESS SEARCH FILTERS"))]
 
-    [else
+    [else                                                               ; else, print the filtered results
      (begin
        (print-list (sort-list filtered-results sort-criterion)))])
 
-  (begin
+  (begin                                                                ; ask if user wants to continue
     (displayln "---")
     (displayln "ENTER ANY VALUE TO CONTINUE; LEAVE FIELD BLANK TO QUIT")
     (define continue (read-line))
