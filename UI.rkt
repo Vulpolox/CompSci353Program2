@@ -65,7 +65,9 @@
         (displayln "Enter any value to continue")))
           
   (define choice (read-line))                                   ; raw user input
-  (define casted-choice (string-ref (string-upcase choice) 0))  ; the user's input casted to a capitalized char
+  (define casted-choice (if (not (string=? choice ""))          ; the user's input casted to a capitalized char
+                            (string-ref (string-upcase choice) 0)
+                            ""))
     
   (cond
     [(not (hash-has-key? menu-hash                        ; if the received input is not on the menu
